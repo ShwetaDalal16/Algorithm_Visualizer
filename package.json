@@ -1,11 +1,13 @@
 {
-  "name": "searching_visualizer",
+  "name": "algorithm_visualizer",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "1.1.4"
+    "react-helmet": "^6.0.0",
+    "react-scripts": "1.1.4",
+    "reactstrap": "^8.4.1"
   },
   "scripts": {
     "start": "react-scripts start",

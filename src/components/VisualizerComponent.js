@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import getBubblesortAnimation from './BubbleSortAnimation';
+import getSelectionSortAnimation from './SelectionSortAnimation'
 import '../App.css';
 
 const NUMBER_OF_ARRAY_BARS = 60;
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
-const ANIMATION_SPEED_MS = 100;
+const ANIMATION_SPEED_MS = 10;
 
 class Visualizer extends Component {
     constructor(props) {
@@ -45,9 +46,9 @@ class Visualizer extends Component {
 
     search() {
         const animation = this.animate();
-        console.log(animation);
+        // console.log(animation);
+        const arrayBars = document.getElementsByClassName('array-bar');
         for (var i = 0; i < animation.length; ++i) {
-            const arrayBars = document.getElementsByClassName('array-bar');
             const barStyle = arrayBars[i].style;
             for (var j = 0; j < animation[i].length; ++j) {
                 console.log(animation[i][j]);
@@ -90,7 +91,8 @@ class Visualizer extends Component {
                     barOneStyle.backgroundColor = color;
                     barTwoStyle.backgroundColor = color;
                 }, i * ANIMATION_SPEED_MS);
-            } else {
+            } 
+            else {
                 if (animations[i][2] == true) {
                     setTimeout(() => {
                         const [barOneIdx, barTwoIdx] = animations[i];
@@ -106,8 +108,50 @@ class Visualizer extends Component {
         }
     }
 
+    selectionSort() {
+        const animations = getSelectionSortAnimation(this.state.array);
+        var colorChanged = false;
+        console.log(animations);
+        for (let i = 0; i < animations.length; i++) {
+            const arrayBars = document.getElementsByClassName('array-bar');
+            const barOneIdx = animations[i][0];
+            const barTwoIdx = animations[i][1];
+            console.log(i);
+            console.log(barOneIdx, barTwoIdx);
+            const barOneStyle = arrayBars[barOneIdx].style;
+            const barTwoStyle = arrayBars[barTwoIdx].style;
+            if (animations[i][2] === 'noSwap') {
+                if (!colorChanged) {
+                    console.log("secondary");
+                    setTimeout(() => {
+                        barOneStyle.backgroundColor = SECONDARY_COLOR;
+                        barTwoStyle.backgroundColor = SECONDARY_COLOR;
+                    }, i*ANIMATION_SPEED_MS);
+                    colorChanged = true;
+                }
+                else {
+                    console.log("primary");
+                    setTimeout(() => {
+                        barOneStyle.backgroundColor = PRIMARY_COLOR;
+                        barTwoStyle.backgroundColor = PRIMARY_COLOR;
+                    }, i*ANIMATION_SPEED_MS);
+                    colorChanged = false;
+                }
+            }
+            else if (animations[i][2] === 'Swap') {
+                setTimeout(() => {
+                    const barOneHeight = barOneStyle.height;
+                    const barTwoHeight = barTwoStyle.height;
+                    barOneStyle.height = `${barTwoHeight}`;
+                    barTwoStyle.height = `${barOneHeight}`;
+                }, i*ANIMATION_SPEED_MS);
+            }
+        }
+    }
+
     render() {
         const { array } = this.state;
+        const {Search} = this.props.VisualizeSearch? true : false;
         return (
             <div className="array-container">
                 {array.map((value, idx) => (
@@ -119,9 +163,9 @@ class Visualizer extends Component {
                             height: `${value}px`,
                         }}></div>
                 ))}
-
                 <button onClick={() => this.search()}>Search</button>
                 <button onClick={() => this.bubbleSort()}>Bubble sort</button>
+                <button onClick={() => this.selectionSort()}>Selection sort</button>
             </div>
         );
     }
