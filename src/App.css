@@ -1,15 +1,22 @@
-.array-container {
-  position: absolute;
-  left: 100px;
-  /* top: 100px; */
+.array-value {
+  font-size: small;
+  text-align: center;
 }
 
 .array-bar {
-  width: 10px;
-  display: inline-block;
+  width: 18px;
+  margin: 0 3px;
+}
+
+.compare-bar {
+  width: 8px;
   margin: 0 1px;
 }
 
-.header {
-  padding: 10px;
+.button {
+  margin-left: 10px;
+}
+
+.compare-cards {
+  margin: 10px;
 }
