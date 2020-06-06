@@ -4,6 +4,7 @@ import bubbleSort from './BubbleSort/BubbleSort';
 import selectionSort from './SelectionSort/SelectionSort';
 import insertionSort from './InsertionSort/InsertionSort';
 import mergeSort from './MergeSort/mergeSort';
+import quickSort from './QuickSort/quickSort'
 import '../App.css';
 
 const NUMBER_OF_ARRAY_BARS = 45;
@@ -71,6 +72,11 @@ class Visualizer extends Component {
                                 this.resetColor();
                                 mergeSort(this.state.array, false);
                             }}>Merge sort</Button>
+                        <Button className="button"
+                            onClick={() => {
+                                this.resetColor();
+                                quickSort(this.state.array, false);
+                            }}>Quick sort</Button>
                     </div>
                 </Navbar>
                 <div className="container visualizer-container">

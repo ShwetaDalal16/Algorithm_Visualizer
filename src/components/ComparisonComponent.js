@@ -5,8 +5,9 @@ import selectionSort from './SelectionSort/SelectionSort';
 import insertionSort from './InsertionSort/InsertionSort';
 import mergeSort from './MergeSort/mergeSort';
 import '../App.css';
+import quickSort from './QuickSort/quickSort';
 
-const NUMBER_OF_ARRAY_BARS = 60;
+const NUMBER_OF_ARRAY_BARS = 40;
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 const DETECT_COLOR = 'yellow';
@@ -44,6 +45,7 @@ class Comparison extends Component {
         var array2 = new Array().concat(this.state.array);
         var array3 = new Array().concat(this.state.array);
         var array4 = new Array().concat(this.state.array);
+        var array5 = new Array().concat(this.state.array);
         return (
             <div className="visualizer-container" style={{ backgroundColor: '#f8f9fa' }}>
                 <div style={{backgroundColor: 'white', padding: '10px'}}>
@@ -53,6 +55,7 @@ class Comparison extends Component {
                         mergeSort(array2, true);
                         bubbleSort(array3, true);
                         selectionSort(array4, true);
+                        quickSort(array5, true);
                     }}>Start</Button>
                 </div>
                 <div className="d-flex">
@@ -125,6 +128,23 @@ class Comparison extends Component {
                             ))}
                         </CardBody>
                         <CardFooter><CardTitle className="card-title4"><h4>Selection Sort</h4></CardTitle></CardFooter>
+                    </Card>
+                    <Card className="container card5 compare-cards">
+                        <CardBody className="array-container5 d-flex flex-row align-items-end" >
+                            {array5.map((value, idx) => (
+                                <div className="array-bar-div5">
+                                    <div
+                                        className="array-bar5 compare-bar"
+                                        key={idx}
+                                        style={{
+                                            backgroundColor: PRIMARY_COLOR,
+                                            height: `${value}px`,
+                                            border: '2px ridge'
+                                        }}></div>
+                                </div>
+                            ))}
+                        </CardBody>
+                        <CardFooter><CardTitle className="card-title5"><h4>Quick Sort</h4></CardTitle></CardFooter>
                     </Card>
                 </div>
             </div>
