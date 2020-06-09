@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { Button, Card, CardBody, CardTitle, CardHeader, Navbar } from 'reactstrap';
-import bubbleSort from './BubbleSort/BubbleSort';
 import selectionSort from './SelectionSort/SelectionSort';
 import insertionSort from './InsertionSort/InsertionSort';
 import mergeSort from './MergeSort/mergeSort';
-import quickSort from './QuickSort/quickSort'
+import quickSort from './QuickSort/quickSort';
 import '../App.css';
+import bubbleSort from './BubbleSort/BubbleSort';
+import heapSort from './HeapSort/heapSort';
 
 const NUMBER_OF_ARRAY_BARS = 45;
 const PRIMARY_COLOR = 'turquoise';
-const SECONDARY_COLOR = 'red';
-const DETECT_COLOR = 'yellow';
-const ANIMATION_SPEED_MS = 200;
+var animationIds = [];
+
 
 class Visualizer extends Component {
     constructor(props) {
@@ -41,12 +41,19 @@ class Visualizer extends Component {
         }
     }
 
+    resetAnimation() {
+        for (let i = 0; i < animationIds.length; ++i) {
+            clearTimeout(animationIds[i]);
+        }
+        this.resetColor();
+    }
+
     render() {
-        const { array } = this.state;
+        const array = this.state.array;
         return (
-            <div style={{backgroundColor: '#f8f9fa'}}>
-                <Navbar light color="white" style={{borderBottom: '1px ridge'}}>
-                    <div className="algorithms">
+            <div style={{ backgroundColor: '#f8f9fa' }}>
+                <Navbar light color="white" style={{ borderBottom: '1px ridge' }}>
+                    <div className="algorithms d-flex">
                         <Button className="button"
                             color="primary"
                             onClick={() => {
@@ -54,29 +61,32 @@ class Visualizer extends Component {
                             }}>Reset Array</Button>
                         <Button className="button"
                             onClick={() => {
-                                this.resetColor();
-                                bubbleSort(this.state.array, false);
+                                animationIds = bubbleSort(this.state.array, false);
                             }}>Bubble sort</Button>
                         <Button className="button"
                             onClick={() => {
-                                this.resetColor();
-                                selectionSort(this.state.array, false);
+                                animationIds = selectionSort(this.state.array, false);
                             }}>Selection sort</Button>
                         <Button className="button"
                             onClick={() => {
-                                this.resetColor();
-                                insertionSort(this.state.array, false);
+                                animationIds = insertionSort(this.state.array, false);
                             }}>Insertion sort</Button>
                         <Button className="button"
                             onClick={() => {
-                                this.resetColor();
-                                mergeSort(this.state.array, false);
+                                animationIds = mergeSort(this.state.array, false);
                             }}>Merge sort</Button>
                         <Button className="button"
                             onClick={() => {
-                                this.resetColor();
-                                quickSort(this.state.array, false);
+                                animationIds = quickSort(this.state.array, false);
                             }}>Quick sort</Button>
+                        <Button className="button"
+                            onClick={() => {
+                                animationIds = heapSort(this.state.array, false);
+                            }}>Heap sort</Button>
+                        <Button className="button"
+                            onClick={() => {
+                                this.resetAnimation();
+                            }}>Stop</Button>
                     </div>
                 </Navbar>
                 <div className="container visualizer-container">
@@ -91,7 +101,9 @@ class Visualizer extends Component {
                                         style={{
                                             backgroundColor: PRIMARY_COLOR,
                                             height: `${value}px`,
-                                            border: '2px ridge'
+                                            border: '2px ridge',
+                                            width: '18px',
+                                            margin: '0 3px'
                                         }}></div>
                                     <div
                                         className="array-value"

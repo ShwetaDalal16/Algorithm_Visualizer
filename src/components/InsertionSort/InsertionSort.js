@@ -3,12 +3,17 @@ import getInsertionSortAnimation from './InsertionSortAnimation';
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 const DETECT_COLOR = 'yellow';
-const ANIMATION_SPEED_MS = 1;
+var ANIMATION_SPEED_MS = 1;
+var animationIds = [];
 
 export default function insertionSort(array, compare) {
      const animations2 = getInsertionSortAnimation(array);
     if (!compare) {
+        ANIMATION_SPEED_MS = 20;
         document.getElementsByClassName('card-title')[0].firstElementChild.innerHTML = 'Insertion Sort';
+    }
+    else {
+        ANIMATION_SPEED_MS = 1;
     }
     var colorChanged = false;
     for (let i = 0; i < animations2.length; i++) {
@@ -28,24 +33,26 @@ export default function insertionSort(array, compare) {
             const barTwoStyle = arrayBars[barTwoIdx].style;
             const barThreeStyle = arrayBars[barThreeIdx].style;
             if (!colorChanged) {
-                setTimeout(() => {
+                const animationId = setTimeout(() => {
                     barOneStyle.backgroundColor = SECONDARY_COLOR;
                     barTwoStyle.backgroundColor = SECONDARY_COLOR;
                     barThreeStyle.backgroundColor = DETECT_COLOR;
                 }, i*ANIMATION_SPEED_MS);
                 colorChanged = true;
+                animationIds.push(animationId);
             }
             else {
-                setTimeout(() => {
+                const animationId = setTimeout(() => {
                     barOneStyle.backgroundColor = PRIMARY_COLOR;
                     barTwoStyle.backgroundColor = PRIMARY_COLOR;
                     barThreeStyle.backgroundColor = PRIMARY_COLOR;
                 }, i*ANIMATION_SPEED_MS);
                 colorChanged = false;
+                animationIds.push(animationId);
             }
         }
         else {
-            setTimeout(() => {
+            const animationId = setTimeout(() => {
                 const barOneIdx = animations2[i][0];
                 const barTwoIdx = animations2[i][1];
                 const barOneStyle = arrayBars[barOneIdx].style;
@@ -61,6 +68,7 @@ export default function insertionSort(array, compare) {
                     valTwoStyle.innerHTML = barOneHeight.match(/(\d+)/)[0];
                 }
             }, i * ANIMATION_SPEED_MS+5);
+            animationIds.push(animationId);
         }
     }
 }

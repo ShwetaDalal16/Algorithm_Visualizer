@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
-import { Button, Container, Row, Col, Card, CardBody, CardTitle, CardHeader, Navbar, CardFooter } from 'reactstrap';
+import { Button, Card, CardBody, CardTitle, CardFooter } from 'reactstrap';
 import bubbleSort from './BubbleSort/BubbleSort';
 import selectionSort from './SelectionSort/SelectionSort';
 import insertionSort from './InsertionSort/InsertionSort';
 import mergeSort from './MergeSort/mergeSort';
 import '../App.css';
 import quickSort from './QuickSort/quickSort';
+import heapSort from './HeapSort/heapSort';
 
 const NUMBER_OF_ARRAY_BARS = 40;
 const PRIMARY_COLOR = 'turquoise';
-const SECONDARY_COLOR = 'red';
-const DETECT_COLOR = 'yellow';
 
 class Comparison extends Component {
     constructor(props) {
@@ -41,11 +40,13 @@ class Comparison extends Component {
     }
 
     render() {
-        var array1 = new Array().concat(this.state.array);
-        var array2 = new Array().concat(this.state.array);
-        var array3 = new Array().concat(this.state.array);
-        var array4 = new Array().concat(this.state.array);
-        var array5 = new Array().concat(this.state.array);
+        () => this.resetArray()
+        var array1 = [].concat(this.state.array);
+        var array2 = [].concat(this.state.array);
+        var array3 = [].concat(this.state.array);
+        var array4 = [].concat(this.state.array);
+        var array5 = [].concat(this.state.array);
+        var array6 = [].concat(this.state.array);
         return (
             <div className="visualizer-container" style={{ backgroundColor: '#f8f9fa' }}>
                 <div style={{backgroundColor: 'white', padding: '10px'}}>
@@ -56,6 +57,7 @@ class Comparison extends Component {
                         bubbleSort(array3, true);
                         selectionSort(array4, true);
                         quickSort(array5, true);
+                        heapSort(array6, true);
                     }}>Start</Button>
                 </div>
                 <div className="d-flex">
@@ -93,8 +95,6 @@ class Comparison extends Component {
                         </CardBody>
                         <CardFooter><CardTitle className="card-title2"><h4>Insertion Sort</h4></CardTitle></CardFooter>
                     </Card>
-                </div>
-                <div className="d-flex">
                     <Card className="container card3 compare-cards">
                         <CardBody className="array-container3 d-flex flex-row align-items-end" >
                             {array3.map((value, idx) => (
@@ -112,6 +112,8 @@ class Comparison extends Component {
                         </CardBody>
                         <CardFooter><CardTitle className="card-title3"><h4>Merge Sort</h4></CardTitle></CardFooter>
                     </Card>
+                </div>
+                <div className="d-flex">
                     <Card className="container card4 compare-cards">
                         <CardBody className="array-container4 d-flex flex-row align-items-end" >
                             {array4.map((value, idx) => (
@@ -145,6 +147,23 @@ class Comparison extends Component {
                             ))}
                         </CardBody>
                         <CardFooter><CardTitle className="card-title5"><h4>Quick Sort</h4></CardTitle></CardFooter>
+                    </Card>
+                    <Card className="container card6 compare-cards">
+                        <CardBody className="array-container6 d-flex flex-row align-items-end" >
+                            {array5.map((value, idx) => (
+                                <div className="array-bar-div6">
+                                    <div
+                                        className="array-bar6 compare-bar"
+                                        key={idx}
+                                        style={{
+                                            backgroundColor: PRIMARY_COLOR,
+                                            height: `${value}px`,
+                                            border: '2px ridge'
+                                        }}></div>
+                                </div>
+                            ))}
+                        </CardBody>
+                        <CardFooter><CardTitle className="card-title6"><h4>Heap Sort</h4></CardTitle></CardFooter>
                     </Card>
                 </div>
             </div>

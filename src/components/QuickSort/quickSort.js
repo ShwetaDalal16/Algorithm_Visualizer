@@ -3,12 +3,17 @@ import getQuickSortAnimation from './QuickSortAnimation';
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 const DETECT_COLOR = 'yellow';
-const ANIMATION_SPEED_MS = 1;
+var ANIMATION_SPEED_MS = 1;
+var animationIds = [];
 
 export default function quickSort(array, compare) {
-    const animations5 = getQuickSortAnimation(array, 0, array.length-1);
+    var animations5 = getQuickSortAnimation(array, 0, array.length-1);
     if (!compare) {
+        ANIMATION_SPEED_MS = 20;
         document.getElementsByClassName('card-title')[0].firstElementChild.innerHTML = 'Quick Sort';
+    }
+    else {
+        ANIMATION_SPEED_MS = 1;
     }
     var colorChanged = false;
     for (let i = 0; i < animations5.length; i++) {
@@ -27,28 +32,30 @@ export default function quickSort(array, compare) {
             const barTwoStyle = arrayBars[barTwoIdx].style;
             const barThreeStyle = arrayBars[barThreeIdx].style;
             if (!colorChanged) {
-                setTimeout(() => {
+                const animationId = setTimeout(() => {
                     if (barOneStyle) {
                         barOneStyle.backgroundColor = SECONDARY_COLOR;
                     }
                     barTwoStyle.backgroundColor = SECONDARY_COLOR;
                     barThreeStyle.backgroundColor = DETECT_COLOR;
                 }, i * ANIMATION_SPEED_MS);
+                animationIds.push(animationId);
                 colorChanged = true;
             }
             else {
-                setTimeout(() => {
+                const animationId = setTimeout(() => {
                     if (barOneStyle) {
                         barOneStyle.backgroundColor = PRIMARY_COLOR;
                     }  
                     barTwoStyle.backgroundColor = PRIMARY_COLOR;
                     barThreeStyle.backgroundColor = PRIMARY_COLOR;
                 }, i * ANIMATION_SPEED_MS);
+                animationIds.push(animationId);
                 colorChanged = false;
             }
         }
         else {
-            setTimeout(() => {
+            const animationId = setTimeout(() => {
                 const barOneIdx = animations5[i][0];
                 const barTwoIdx = animations5[i][1];
                 const barOneStyle = arrayBars[barOneIdx].style;
@@ -64,6 +71,8 @@ export default function quickSort(array, compare) {
                     valTwoStyle.innerHTML = barOneHeight.match(/(\d+)/)[0];
                 }
             }, i * ANIMATION_SPEED_MS+5);
+            animationIds.push(animationId);
         }
     }
+    return animationIds;
 }
