@@ -2,7 +2,7 @@ import getBubblesortAnimation from './BubbleSortAnimation';
 
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
-var ANIMATION_SPEED_MS = 20;
+var ANIMATION_SPEED_MS = 2;
 const animationIds = [];
 
 export default function bubbleSort(array, compare) {
@@ -12,7 +12,7 @@ export default function bubbleSort(array, compare) {
         document.getElementsByClassName('card-title')[0].firstElementChild.innerHTML = 'Bubble Sort';
     }
     else {
-        ANIMATION_SPEED_MS = 1;
+        ANIMATION_SPEED_MS = 2;
     }
     var colorChanged = false;
     for (let i = 0; i < animations1.length; i++) {

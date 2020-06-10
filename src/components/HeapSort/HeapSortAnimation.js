@@ -1,9 +1,7 @@
-const animations6 = [];
-
-export default function getHeapSortAnimation(array, n) {
+export default function getHeapSortAnimation(array, n, animations6) {
 
     for (let i = Math.floor(n / 2) - 1; i >= 0; i--)
-        heapify(array, n, i);
+        heapify(array, n, i, animations6);
  
     for (let i = n; i > 0; i--) {
         animations6.push([0, i, 'Swap']);
@@ -11,12 +9,11 @@ export default function getHeapSortAnimation(array, n) {
         array[0] = array[i];
         array[i] = temp;
 
-        heapify(array, i, 0);
+        heapify(array, i, 0, animations6);
     }
-    return animations6;
 }
 
-function heapify(array, n, i) {
+function heapify(array, n, i, animations6) {
     var largest = i;
     var l = 2 * i + 1;
     var r = 2 * i + 2;
@@ -36,7 +33,7 @@ function heapify(array, n, i) {
         array[i] = array[largest];
         array[largest] = temp;
 
-        heapify(array, n, largest);
+        heapify(array, n, largest, animations6);
     }
 }
 

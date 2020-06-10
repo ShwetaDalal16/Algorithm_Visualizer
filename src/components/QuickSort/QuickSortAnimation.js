@@ -1,19 +1,15 @@
-const animations5 = [];
-
-export default function getQuickSortAnimation(array, low, high)  
+export default function getQuickSortAnimation(array, low, high, animations5)  
 {  
     if (low < high)  
     {
-        var pi = partition(array, low, high);
+        var pi = partition(array, low, high, animations5);
 
-        getQuickSortAnimation(array, low, pi - 1);  
-        getQuickSortAnimation(array, pi + 1, high);  
+        getQuickSortAnimation(array, low, pi - 1, animations5);  
+        getQuickSortAnimation(array, pi + 1, high, animations5);  
     }
-    // console.log(animations5);
-    return animations5;
 }
 
-function partition (array, low, high)  
+function partition (array, low, high, animations5)  
 {  
     var pivot = array[high]; 
     var i = (low - 1);

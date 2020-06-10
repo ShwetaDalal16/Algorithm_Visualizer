@@ -10,24 +10,53 @@ import heapSort from './HeapSort/heapSort';
 
 const NUMBER_OF_ARRAY_BARS = 40;
 const PRIMARY_COLOR = 'turquoise';
+var animationIds1 = [];
+var animationIds2 = [];
+var animationIds3 = [];
+var animationIds4 = [];
+var animationIds5 = [];
+var animationIds6 = [];
 
 class Comparison extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            array: []
+            array: [],
+            sorting: false
         }
     }
 
     componentDidMount() {
-        this.resetArray();
+        this.randomizeArray();
     }
 
-    resetArray() {
+    randomizeArray() {
         const array = [];
         for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
             array.push(Math.floor(Math.random() * (230 - 5) + 5));
+        }
+        this.setState({ array: array });
+    }
+
+    sortedArray() {
+        const array = [];
+        var j = 5;
+        for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
+            array.push(j);
+            console.log(j);
+            j += 5
+        }
+        this.setState({ array: array });
+    }
+
+    reversedArray() {
+        const array = [];
+        var j = 200;
+        for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
+            array.push(j);
+            console.log(j);
+            j -= 5
         }
         this.setState({ array: array });
     }
@@ -39,8 +68,29 @@ class Comparison extends Component {
         }
     }
 
+    resetAnimation() {
+        for (let i = 0; i < animationIds3.length; ++i) {
+            clearTimeout(animationIds3[i]);
+        }
+        for (let i = 0; i < animationIds4.length; ++i) {
+            clearTimeout(animationIds4[i]);
+        }
+        for (let i = 0; i < animationIds1.length; ++i) {
+            clearTimeout(animationIds1[i]);
+        }
+        for (let i = 0; i < animationIds2.length; ++i) {
+            clearTimeout(animationIds2[i]);
+        }
+        for (let i = 0; i < animationIds5.length; ++i) {
+            clearTimeout(animationIds5[i]);
+        }
+        for (let i = 0; i < animationIds6.length; ++i) {
+            clearTimeout(animationIds6[i]);
+        }
+        this.resetColor();
+    }
+
     render() {
-        () => this.resetArray()
         var array1 = [].concat(this.state.array);
         var array2 = [].concat(this.state.array);
         var array3 = [].concat(this.state.array);
@@ -49,16 +99,52 @@ class Comparison extends Component {
         var array6 = [].concat(this.state.array);
         return (
             <div className="visualizer-container" style={{ backgroundColor: '#f8f9fa' }}>
-                <div style={{backgroundColor: 'white', padding: '10px'}}>
-                    <Button style={{marginLeft: '1250px'}}
+                <div className="d-flex" style={{ backgroundColor: 'white', padding: '10px' }}>
+                    <Button
+                        disabled={this.state.sorting}
+                        style={{ marginLeft: '10px' }}
                         onClick={() => {
-                        insertionSort(array1, true);
-                        mergeSort(array2, true);
-                        bubbleSort(array3, true);
-                        selectionSort(array4, true);
-                        quickSort(array5, true);
-                        heapSort(array6, true);
-                    }}>Start</Button>
+                            this.randomizeArray();
+                            this.forceUpdate();
+                        }}>
+                        Randomize Array
+                        </Button>
+                    <Button
+                        disabled={this.state.sorting}
+                        style={{ marginLeft: '10px' }}
+                        onClick={() => {
+                            this.sortedArray();
+                            this.forceUpdate();
+                        }}>
+                        Sorted Array
+                        </Button>
+                    <Button
+                        disabled={this.state.sorting}
+                        style={{ marginLeft: '10px' }}
+                        onClick={() => {
+                            this.reversedArray();
+                            this.forceUpdate();
+                        }}>
+                        Reversed Array
+                        </Button>
+                    <Button className="ml-auto"
+                        disabled={this.state.sorting}
+                        onClick={() => {
+                            this.setState({ sorting: true });
+                            setTimeout(() => {
+                                animationIds1 = insertionSort(array1, true);
+                                animationIds2 = mergeSort(array2, true);
+                                animationIds3 = bubbleSort(array3, true);
+                                animationIds4 = selectionSort(array4, true);
+                                animationIds5 = quickSort(array5, true);
+                                animationIds6 = heapSort(array6, true);
+                            }, 10);
+                        }}>Sort</Button>
+                    <Button className="button"
+                        onClick={() => {
+                            this.setState({ sorting: false });
+                            this.randomizeArray();
+                        }}>Check other</Button>
                 </div>
                 <div className="d-flex">
                     <Card className="container card1 compare-cards">

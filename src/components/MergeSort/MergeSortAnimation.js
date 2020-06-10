@@ -1,4 +1,4 @@
-function merge(array3, l, m, r) 
+function merge(array3, l, m, r, animations3) 
 {
     animations3.push([l, m, r, 'noSwap']);
     animations3.push([l, m, r, 'noSwap']);
@@ -49,8 +49,7 @@ function merge(array3, l, m, r)
         k++; 
     } 
 }
-const animations3 = [];
-export default function getMergeSortAnimation( array3, l, r) 
+export default function getMergeSortAnimation( array3, l, r, animations3) 
 {
     if (l < r) 
     {
@@ -59,10 +58,9 @@ export default function getMergeSortAnimation( array3, l, r)
         animations3.push([l,m,r, 'noSwap']);
         animations3.push([l,m,r, 'noSwap']);
 
-        getMergeSortAnimation(array3, l, m); 
-        getMergeSortAnimation(array3, m+1, r); 
+        getMergeSortAnimation(array3, l, m, animations3); 
+        getMergeSortAnimation(array3, m+1, r, animations3); 
   
-        merge(array3, l, m, r); 
+        merge(array3, l, m, r, animations3); 
     }
-    return animations3;
 } 

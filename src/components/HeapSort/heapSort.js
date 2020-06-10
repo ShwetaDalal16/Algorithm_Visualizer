@@ -3,17 +3,18 @@ import getHeapSortAnimation from './HeapSortAnimation';
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 const DETECT_COLOR = 'yellow';
-var ANIMATION_SPEED_MS = 20;
+var ANIMATION_SPEED_MS = 2;
 var animationIds = [];
 
 export default function heapSort(array, compare) {
-    const animations6 = getHeapSortAnimation(array, array.length-1);
+    const animations6 = [];
+    getHeapSortAnimation(array, array.length-1, animations6);
     if (!compare) {
         ANIMATION_SPEED_MS = 20;
         document.getElementsByClassName('card-title')[0].firstElementChild.innerHTML = 'Merge Sort';
     }
     else{
-        ANIMATION_SPEED_MS = 1;
+        ANIMATION_SPEED_MS = 2;
     }
     var colorChanged = false;
     for (let i = 0; i < animations6.length; i++) {

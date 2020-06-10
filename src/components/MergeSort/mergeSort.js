@@ -3,17 +3,18 @@ import getMergeSortAnimation from './MergeSortAnimation';
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 const DETECT_COLOR = 'yellow';
-var ANIMATION_SPEED_MS = 1;
+var ANIMATION_SPEED_MS = 2;
 var animationIds = [];
 
 export default function mergeSort(array, compare) {
-    const animations3 = getMergeSortAnimation(array, 0, array.length-1);
+    const animations3 = [];
+    getMergeSortAnimation(array, 0, array.length-1, animations3);
     if (!compare) {
         ANIMATION_SPEED_MS = 20;
         document.getElementsByClassName('card-title')[0].firstElementChild.innerHTML = 'Merge Sort';
     }
     else {
-        ANIMATION_SPEED_MS = 1;
+        ANIMATION_SPEED_MS = 2;
     }
     var colorChanged = false;
     for (let i = 0; i < animations3.length; i++) {

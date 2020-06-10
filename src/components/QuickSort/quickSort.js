@@ -3,17 +3,18 @@ import getQuickSortAnimation from './QuickSortAnimation';
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 const DETECT_COLOR = 'yellow';
-var ANIMATION_SPEED_MS = 1;
+var ANIMATION_SPEED_MS = 2;
 var animationIds = [];
 
 export default function quickSort(array, compare) {
-    var animations5 = getQuickSortAnimation(array, 0, array.length-1);
+    const animations5 = [];
+    getQuickSortAnimation(array, 0, array.length-1, animations5);
     if (!compare) {
         ANIMATION_SPEED_MS = 20;
         document.getElementsByClassName('card-title')[0].firstElementChild.innerHTML = 'Quick Sort';
     }
     else {
-        ANIMATION_SPEED_MS = 1;
+        ANIMATION_SPEED_MS = 2;
     }
     var colorChanged = false;
     for (let i = 0; i < animations5.length; i++) {

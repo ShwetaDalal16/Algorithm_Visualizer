@@ -3,7 +3,7 @@ import getInsertionSortAnimation from './InsertionSortAnimation';
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 const DETECT_COLOR = 'yellow';
-var ANIMATION_SPEED_MS = 1;
+var ANIMATION_SPEED_MS = 2;
 var animationIds = [];
 
 export default function insertionSort(array, compare) {
@@ -13,7 +13,7 @@ export default function insertionSort(array, compare) {
         document.getElementsByClassName('card-title')[0].firstElementChild.innerHTML = 'Insertion Sort';
     }
     else {
-        ANIMATION_SPEED_MS = 1;
+        ANIMATION_SPEED_MS = 2;
     }
     var colorChanged = false;
     for (let i = 0; i < animations2.length; i++) {
@@ -71,4 +71,5 @@ export default function insertionSort(array, compare) {
             animationIds.push(animationId);
         }
     }
+    return animationIds;
 }

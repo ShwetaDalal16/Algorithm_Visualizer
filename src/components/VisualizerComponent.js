@@ -18,7 +18,8 @@ class Visualizer extends Component {
         super(props);
 
         this.state = {
-            array: []
+            array: [],
+            sorting: false,
         }
     }
 
@@ -27,6 +28,7 @@ class Visualizer extends Component {
     }
 
     resetArray() {
+        this.resetAnimation();
         const array = [];
         for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
             array.push(Math.floor(Math.random() * (400 - 5) + 5));
@@ -49,44 +51,77 @@ class Visualizer extends Component {
     }
 
     render() {
-        const array = this.state.array;
+        var array = [];
+        if (!this.state.sorting) {
+            array = this.state.array;
+        }
+        else {
+            array = this.state.array;
+        }
         return (
             <div style={{ backgroundColor: '#f8f9fa' }}>
                 <Navbar light color="white" style={{ borderBottom: '1px ridge' }}>
                     <div className="algorithms d-flex">
                         <Button className="button"
+                            disabled={this.state.sorting}
                             color="primary"
                             onClick={() => {
-                                this.resetArray()
+                                this.resetArray();
                             }}>Reset Array</Button>
                         <Button className="button"
+                            disabled={this.state.sorting}
                             onClick={() => {
-                                animationIds = bubbleSort(this.state.array, false);
+                                this.setState({ sorting: true });
+                                setTimeout(() => {
+                                    animationIds = bubbleSort(this.state.array, false);
+                                }, 10);
                             }}>Bubble sort</Button>
                         <Button className="button"
+                            disabled={this.state.sorting}
                             onClick={() => {
-                                animationIds = selectionSort(this.state.array, false);
+                                this.setState({ sorting: true });
+                                setTimeout(() => {
+                                    animationIds = selectionSort(this.state.array, false);
+                                }, 10);
                             }}>Selection sort</Button>
                         <Button className="button"
+                            disabled={this.state.sorting}
                             onClick={() => {
-                                animationIds = insertionSort(this.state.array, false);
+                                this.setState({ sorting: true });
+                                setTimeout(() => {
+                                    animationIds = insertionSort(this.state.array, false);
+                                }, 10);
                             }}>Insertion sort</Button>
                         <Button className="button"
+                            disabled={this.state.sorting}
                             onClick={() => {
-                                animationIds = mergeSort(this.state.array, false);
+                                this.setState({ sorting: true });
+                                setTimeout(() => {
+                                    animationIds = mergeSort(this.state.array, false);
+                                }, 10);
                             }}>Merge sort</Button>
                         <Button className="button"
+                            disabled={this.state.sorting}
                             onClick={() => {
-                                animationIds = quickSort(this.state.array, false);
+                                this.setState({ sorting: true });
+                                setTimeout(() => {
+                                    animationIds = quickSort(this.state.array, false);
+                                }, 10);
                             }}>Quick sort</Button>
                         <Button className="button"
+                            disabled={this.state.sorting}
                             onClick={() => {
-                                animationIds = heapSort(this.state.array, false);
+                                this.setState({ sorting: true });
+                                setTimeout(() => {
+                                    animationIds = heapSort(this.state.array, false);
+                                }, 10);
                             }}>Heap sort</Button>
                         <Button className="button"
                             onClick={() => {
+                                this.setState({ sorting: false });
+                                this.resetArray();
                                 this.resetAnimation();
-                            }}>Stop</Button>
+                            }}>Check other</Button>
                     </div>
                 </Navbar>
                 <div className="container visualizer-container">
