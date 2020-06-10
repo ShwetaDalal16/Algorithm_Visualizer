@@ -12,14 +12,14 @@ class Header extends Component {
                 </NavbarBrand>
                 <Nav>
                     <NavItem>
-                        <NavLink className="nav-link" to="/visualize">
+                        <NavLink className="nav-link" to="/Algorithm_Visualizer/home">
                             <Button className="button"
                                 onClick={() => {
                                 }}>Visualization</Button>
                         </NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink className="nav-link" to="/compare">
+                        <NavLink className="nav-link" to="/Algorithm_Visualizer/Compare">
                             <Button className="button"
                                 color="primary"
                                 onClick={() => {
