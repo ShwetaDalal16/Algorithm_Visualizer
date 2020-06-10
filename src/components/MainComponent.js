@@ -20,7 +20,6 @@ class Main extends PureComponent {
                         <Route path="/home" component={Visualizer} />
                         <Route exact path='/Compare' component={() => <Comparison />} />
                         <Route exact path='/transform' component={Transform}/>
-                        <Redirect to="/home" />
                     </Switch>
                 </Router>
             </div>

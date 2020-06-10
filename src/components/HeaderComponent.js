@@ -12,7 +12,7 @@ class Header extends Component {
                 </NavbarBrand>
                 <Nav>
                     <NavItem>
-                        <NavLink className="nav-link" to="/home">
+                        <NavLink className="nav-link" to="/visualize">
                             <Button className="button"
                                 onClick={() => {
                                 }}>Visualization</Button>
