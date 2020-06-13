@@ -17,9 +17,9 @@ class Main extends PureComponent {
                 <Router>
                 <Header />
                     <Switch>
-                        <Route path="/Algorithm_Visualizer/home" component={Visualizer} />
-                        <Route path='/Algorithm_Visualizer/Compare' component={() => <Comparison />} />
-                        <Route path='/Algorithm_Visualizer/transform' component={Transform}/>
+                        <Route exact path="/Algorithm_Visualizer/home" component={Visualizer} />
+                        <Route exact path='/Algorithm_Visualizer/Compare' component={() => <Comparison />} />
+                        <Route exact path='/Algorithm_Visualizer/transform' component={Transform}/>
                         <Redirect to="/Algorithm_Visualizer/home" />
                     </Switch>
                 </Router>

@@ -15,7 +15,7 @@ class Header extends Component {
                         <NavLink className="nav-link" to="/Algorithm_Visualizer/home">
                             <Button className="button"
                                 onClick={() => {
-                                }}>Visualization</Button>
+                                }}>Visualize</Button>
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -23,7 +23,7 @@ class Header extends Component {
                             <Button className="button"
                                 color="primary"
                                 onClick={() => {
-                                }}>Comparison</Button>
+                                }}>Compare</Button>
                         </NavLink>
                     </NavItem>
                 </Nav>
