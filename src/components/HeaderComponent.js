@@ -26,6 +26,13 @@ class Header extends Component {
                                 }}>Compare</Button>
                         </NavLink>
                     </NavItem>
+                    <NavItem>
+                        <NavLink className="nav-link" to="/Algorithm_Visualizer/graph">
+                            <Button className="button"
+                                onClick={() => {
+                                }}>Graph</Button>
+                        </NavLink>
+                    </NavItem>
                 </Nav>
             </Navbar>
         );
