@@ -30,9 +30,7 @@ class Visualizer extends Component {
     resetArray() {
         this.resetAnimation();
         const array = [];
-        console.log(window.screen.availWidth);
         NUMBER_OF_ARRAY_BARS = (45*window.screen.width)/1375;
-        console.log(NUMBER_OF_ARRAY_BARS);
         for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
             array.push(Math.floor(Math.random() * (400 - 5) + 5));
         }

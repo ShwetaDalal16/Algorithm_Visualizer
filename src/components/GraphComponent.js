@@ -2,32 +2,15 @@ import React, { Component } from 'react';
 import '../App.css';
 import { Button } from 'reactstrap';
 import graph from '../data-structures/graph';
-import { Modal, ModalHeader, ModalBody, Form, FormGroup, Input, Label } from 'reactstrap';
+import { Input, Label } from 'reactstrap';
 
 var i = 0;
-var nodes = [];
-var edges = [];
 var arrowStarted = false;
-var initialPoint = {};
 var startNode = {};
+var start = {};
+var endNode = {};
 var startNodeSelected = false;
-var bftAlgo = false;
-var dftAlgo = false;
-var bfsAlgo = false;
-var dijkstraAlgo = false;
 var g = new graph(30);
-
-function canvas_arrow(context, fromx, fromy, tox, toy) {
-    var headlen = 10;
-    var dx = tox - fromx;
-    var dy = toy - fromy;
-    var angle = Math.atan2(dy, dx);
-    context.moveTo(fromx, fromy);
-    context.lineTo(tox, toy);
-    context.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
-    context.moveTo(tox, toy);
-    context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
-}
 
 function findPointOfIntersection(initPont, finalPoint, center, radius) {
     var m = (finalPoint.y - initPont.y) / (finalPoint.x - initPont.x);
@@ -51,392 +34,441 @@ class Graph extends Component {
         super(props);
 
         this.state = {
-            isModalOpen: false,
-            weigth: 0,
             nodes: [],
             edges: [],
             directed: true,
+            deleteNode: false,
+            algo: false,
+            dijkstraAlgo: false,
+            bftAlgo: false,
+            dftAlgo: false,
+            bfsAlgo: false,
+            addNode: false,
             addWeight: false,
-            deleteNode: false
+            addEdges: false
         }
-
-        this.animateBFS = this.animateBFS.bind(this);
-        this.animateBFT = this.animateBFT.bind(this);
+        this.svgAnimateBFT = this.svgAnimateBFT.bind(this);
 
     }
 
-    componentDidMount() {
-        var currentComponent = this;
-        var canvas = document.getElementById('myCanvas');
-        var context = canvas.getContext('2d');
+    nodeClick(evt) {
+        document.getElementsByClassName('info')[0].innerHTML = "";
+        evt.preventDefault()
+        evt.stopPropagation();
+        evt.stopImmediatePropagation()
+        if (this.state.bftAlgo) {
+            const node = this.state.nodes.filter((node) => node.id === Number(evt.target.getAttributeNS(null, 'id')))[0];
+            const svgAnimationBFT = g.bft(node);
+            this.svgAnimateBFT(svgAnimationBFT);
+        }
+        if (this.state.dftAlgo) {
+            const node = this.state.nodes.filter((node) => node.id === Number(evt.target.getAttributeNS(null, 'id')))[0];
+            const svgAnimationDFS = g.dft(node);
+            this.svgAnimateBFT(svgAnimationDFS);
+        }
+        if (this.state.bfsAlgo && !startNodeSelected) {
+            start = this.state.nodes.filter((node) => node.id === Number(evt.target.getAttributeNS(null, 'id')))[0];
+            startNodeSelected = true;
+            alert("click any node to search");
+            document.getElementsByClassName('info')[0].innerHTML = "click any node to search";
+        }
+        else if (this.state.bfsAlgo && startNodeSelected) {
+            const node = this.state.nodes.filter((node) => node.id === Number(evt.target.getAttributeNS(null, 'id')))[0];
+            const svgAnimationBFS = g.shortestPathBfs(start, node);
+            this.svgAnimateBFT(svgAnimationBFS);
+            startNodeSelected = false;
+        }
+        if (this.state.dijkstraAlgo && !startNodeSelected) {
+            start = this.state.nodes.filter((node) => node.id === Number(evt.target.getAttributeNS(null, 'id')))[0];
+            startNodeSelected = true;
+            alert("click any node to search");
+            document.getElementsByClassName('info')[0].innerHTML = "click any node to search";
+        }
+        else if (this.state.dijkstraAlgo && startNodeSelected) {
+            const node = this.state.nodes.filter((node) => node.id === Number(evt.target.getAttributeNS(null, 'id')))[0];
+            const svgAnimationDijkstra = g.dijkshra(start, node);
+            this.dijstraDistAnimate(svgAnimationDijkstra);
+            startNodeSelected = false;
+        }
+        return false;
+
     }
 
-    componentDidUpdate() {
-        console.log("component did update");
-        console.log(this.state);
-        console.log(this.state.nodes);
-        var canvas = document.getElementById('myCanvas');
-        var context = canvas.getContext('2d');
+    svgAnimateBFT(svgAnimationBFT) {
+        if (svgAnimationBFT.length === 0) {
+            document.getElementsByClassName('info')[0].style.color = 'red';
+            document.getElementsByClassName('info')[0].innerHTML = "No path";
+            setTimeout(() => {
+                document.getElementsByClassName('info')[0].style.color = 'black';
+                document.getElementsByClassName('info')[0].innerHTML = "click any node to start Search";
 
-        for (let j = 0; j < this.state.nodes.length; ++j) {
-            context.beginPath();
-            context.fillStyle = 'black';
-            context.arc(this.state.nodes[j].x, this.state.nodes[j].y, this.state.nodes[j].radius, 0, 2 * Math.PI);
-            context.fill();
-            context.fillStyle = 'white';
-            context.font = "20px Arial";
-            context.textBaseline = "ideographic";
-            context.fillText(this.state.nodes[j].id, this.state.nodes[j].x - 7, this.state.nodes[j].y + 7);
-            context.stroke();
+            }, 1500)
+        }
+        for (let i = 0; i < svgAnimationBFT.length; ++i) {
+            setTimeout(() => {
+                if (svgAnimationBFT[i] >= 0) {
+                    document.getElementById(`${svgAnimationBFT[i]}`).style.fill = this.state.bfsAlgo ? 'green' : "grey";
+                    if (i === svgAnimationBFT.length - 1) {
+                        setTimeout(() => {
+                            for (let j = 0; j < svgAnimationBFT.length; ++j) {
+                                if (svgAnimationBFT[j] >= 0) {
+                                    document.getElementById(`${svgAnimationBFT[j]}`).style.fill = "black";
+                                }
+                            }
+                            if (this.state.bftAlgo) {
+                                document.getElementsByClassName('info')[0].innerHTML = "click any node to start traversal";
+                            }
+                            if (this.state.dftAlgo) {
+                                document.getElementsByClassName('info')[0].innerHTML = "click any node to start traversal";
+                            }
+                            if (this.state.bfsAlgo) {
+                                document.getElementsByClassName('info')[0].innerHTML = "click any node to start Search";
+                            }
+                            svgAnimationBFT = [];
+                            this.setState({ algo: false });
+                        }, 100);
+                    }
+                }
+            }, i * 1000);
         }
     }
 
-    drawNode(evt) {
-        var canvas = document.getElementById('myCanvas');
-        var context = canvas.getContext('2d');
+    dijstraDistAnimate(svgAnimationDijkstra) {
+        const distance = svgAnimationDijkstra[1];
+        for (let i = 0; i < distance.length; ++i) {
+            setTimeout(() => {
+                document.getElementById(`${distance[i][0]}`).style.fill = "grey";
+                document.getElementById(`d_${distance[i][0]}`).innerHTML = distance[i][1];
+                if (i === distance.length - 1) {
+                    const path = svgAnimationDijkstra[0];
+                    for (let j = 1; j < path.length; ++j) {
+                        setTimeout(() => {
+                            document.getElementById(`${path[j]}`).style.fill = "green";
+                            if (j === path.length - 1) {
+                                for (let k = 0; k < distance.length; ++k) {
+                                    setTimeout(() => {
+                                        document.getElementById(`${distance[k][0]}`).style.fill = "grey";
+                                        document.getElementById(`d_${distance[k][0]}`).innerHTML = "";
+                                        // dijkstraAlgo = false;
+                                        if (this.state.dijkstraAlgo) {
+                                            document.getElementsByClassName('info')[0].innerHTML = "click any node to start Search";
+                                        }
+                                        this.setState({ algo: false });
+                                        svgAnimationDijkstra = [];
+                                    }, 300);
+                                }
+                            }
+                        }, j * 1000);
+                    }
+                }
+            }, i * 1000);
+        }
+    }
 
-        var rect = canvas.getBoundingClientRect();
-        var x = evt.clientX - rect.left;
-        var y = evt.clientY - rect.top;
-        var j = 0, node, edge, k = 0;
-
-        while (node = this.state.nodes[j++]) {
-            context.beginPath();
-            context.fillStyle = 'black';
-            context.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
-            if (context.isPointInPath(x, y)) {
-                if (bftAlgo) {
-                    const animationBFT = g.bft(node);
-                    this.animateBFT(context, animationBFT);
-                }
-                if (dftAlgo) {
-                    const animationDFS = g.dft(node);
-                    this.animateDFS(context, animationDFS);
-                }
-                if (bfsAlgo && !startNodeSelected) {
-                    startNode = node;
-                    startNodeSelected = true;
-                    alert("click any node to search");
-                }
-                else if (bfsAlgo && startNodeSelected) {
-                    const animationBFS = g.shortestPathBfs(startNode, node);
-                    this.animateBFS(context, animationBFS);
-                    bfsAlgo = false;
-                    startNodeSelected = false;
-                }
-                if (dijkstraAlgo) {
-                    g.dijkshra(node);
-                    dijkstraAlgo = false;
-                }
-                if (this.state.deleteNode) {
-                    context.globalAlpha = 0.2;
-                    context.fill();
-                    context.globalAlpha = 1;
-                }
-                return;
+    drawNodeSvg(evt) {
+        if (this.state.addNode) {
+            if (!arrowStarted) {
+                var ns = 'http://www.w3.org/2000/svg';
+                var svg = document.getElementById('svg')
+                var rect = svg.getBoundingClientRect();
+                var x = evt.clientX - rect.left;
+                var y = evt.clientY - rect.top;
+                var g_node = document.createElementNS(ns, 'g');
+                var node = document.createElementNS(ns, 'circle');
+                node.setAttributeNS(null, "cx", x);
+                node.setAttributeNS(null, "cy", y);
+                node.setAttributeNS(null, 'r', 30);
+                node.setAttributeNS(null, 'id', i);
+                node.setAttributeNS(null, 'fill', 'black');
+                node.addEventListener('click', (evt) => this.nodeClick(evt), false);
+                node.addEventListener('mousedown', (evt) => { this.drawEdgeSvg(evt) }, false);
+                node.addEventListener('mouseup', (evt) => { this.drawEdgeSvg(evt) }, false);
+                var nodeVal = document.createElementNS(ns, 'text');
+                nodeVal.setAttributeNS(null, 'x', x)
+                nodeVal.setAttributeNS(null, 'y', y + 5);
+                nodeVal.setAttributeNS(null, 'class', 'nodeval')
+                nodeVal.setAttributeNS(null, 'style', 'fill: white; stroke: white;  font-size: 25px;');
+                nodeVal.addEventListener('click', (evt) => { evt.stopPropagation() }, false);
+                nodeVal.addEventListener('mousedown', (evt) => { this.drawEdgeSvg(evt) }, false);
+                nodeVal.addEventListener('mouseup', (evt) => { this.drawEdgeSvg(evt) }, false);
+                nodeVal.innerHTML = i;
+                nodeVal.style.color = 'white';
+                var distVal = document.createElementNS(ns, 'text');
+                distVal.setAttributeNS(null, 'x', x + 30)
+                distVal.setAttributeNS(null, 'y', y);
+                distVal.setAttributeNS(null, 'style', 'fill: white; stroke: green;  font-size: 15px;');
+                distVal.setAttributeNS(null, 'id', `d_${i}`);
+                g_node.appendChild(node);
+                g_node.appendChild(nodeVal);
+                g_node.appendChild(distVal);
+                g_node.setAttributeNS(null, 'class', 'svgElement');
+                svg.appendChild(g_node);
+                this.setState({
+                    nodes: this.state.nodes.concat({
+                        x: x,
+                        y: y,
+                        radius: 30,
+                        id: i
+                    })
+                });
+                i++;
             }
         }
-
-        while (edge = this.state.edges[k++]) {
-            context.beginPath();
-            context.fillStyle = "black";
-            context.moveTo(edge.initialPoint.x, edge.initialPoint.y);
-            context.arc((edge.initialPoint.x + edge.finalPoint.x)/2, (edge.initialPoint.y + edge.finalPoint.y)/2, 15, 0, 2 * Math.PI);
-            if (context.isPointInPath(x, y)) {
-                alert("clcked");
-                return;
-            }
-        }
-
-        if (!arrowStarted && !this.state.addWeight) {
-            this.setState({
-                nodes: this.state.nodes.concat({
-                    id: i,
-                    x: x,
-                    y: y,
-                    radius: 30
-                })
-            });
-            i++;
-        }
     }
 
-    drawEdge(evt) {
-        var canvas = document.getElementById('myCanvas');
-        var context = canvas.getContext('2d');
-
-        var rect = canvas.getBoundingClientRect();
-        var x = evt.clientX - rect.left;
-        var y = evt.clientY - rect.top;
-        var j = 0, node;
-        while (node = this.state.nodes[j++]) {
-            context.beginPath();
-            context.fillStyle = 'white';
-            context.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
-            if (context.isPointInPath(x, y)) {
-                console.log("mousedown", node);
-                if (evt.type === 'mousedown') {
-                    initialPoint = node;
-                    arrowStarted = true;
-                }
-                else if (evt.type === 'mouseup') {
-                    console.log('mouseup', node);
-                    if (arrowStarted) {
-                        context.beginPath();
-                        if (this.state.directed) {
-                            const pointOfIntersection = findPointOfIntersection(initialPoint, node, node, node.radius);
-                            if (initialPoint.x < node.x) {
-                                canvas_arrow(context, initialPoint.x, initialPoint.y, pointOfIntersection[1].x, pointOfIntersection[1].y);
-                            }
-                            else {
-                                canvas_arrow(context, initialPoint.x, initialPoint.y, pointOfIntersection[0].x, pointOfIntersection[0].y);
-                            }
-                            this.state.edges.push({
-                                initialPoint: initialPoint,
-                                finalPoint: node,
-                                intersectionPoint: pointOfIntersection,
+    drawEdgeSvg(evt) {
+        if (this.state.addEdges) {
+            if (evt.type === 'mousedown') {
+                startNode = this.state.nodes.filter((node) => node.id === Number(evt.target.getAttributeNS(null, 'id')))[0];
+                arrowStarted = true;
+            }
+            else if (evt.type === 'mouseup' && arrowStarted) {
+                endNode = this.state.nodes.filter((node) => node.id === Number(evt.target.getAttributeNS(null, 'id')))[0];
+                if (startNode !== endNode) {
+                    var startPoint = findPointOfIntersection(startNode, endNode, startNode, startNode.radius);
+                    var endPoint = findPointOfIntersection(startNode, endNode, endNode, endNode.radius);
+                    var x1, y1, x2, y2;
+                    if (startNode.x < endNode.x) {
+                        x1 = startPoint[0].x;
+                        y1 = startPoint[0].y;
+                        x2 = endPoint[1].x;
+                        y2 = endPoint[1].y;
+                    }
+                    else {
+                        x1 = startPoint[1].x;
+                        y1 = startPoint[1].y;
+                        x2 = endPoint[0].x;
+                        y2 = endPoint[0].y;
+                    }
+                    var ns = 'http://www.w3.org/2000/svg';
+                    var svg = document.getElementById('svg')
+                    var g_edge = document.createElementNS(ns, 'g');
+                    var edge = document.createElementNS(ns, 'line');
+                    var weightVal = document.createElementNS(ns, 'text');
+                    var weight_x = (startNode.x + endNode.x) / 2;
+                    var weight_y = (startNode.y + endNode.y) / 2;
+                    weightVal.setAttributeNS(null, 'x', weight_x)
+                    weightVal.setAttributeNS(null, 'y', weight_y - 5);
+                    edge.setAttributeNS(null, 'x1', x1);
+                    edge.setAttributeNS(null, 'y1', y1);
+                    edge.setAttributeNS(null, 'x2', x2);
+                    edge.setAttributeNS(null, 'y2', y2);
+                    if (this.state.directed) {
+                        edge.setAttributeNS(null, 'style', 'marker-end: url(#markerArrow)');
+                        weightVal.setAttributeNS(null, 'id', `d_${startNode.id}_${endNode.id}`);
+                        g.addEdges(startNode, endNode, 0, true);
+                        this.setState({
+                            edges: this.state.edges.concat({
+                                id: `${startNode.id}-${endNode.id}`,
+                                startNode: startNode,
+                                endNode: endNode,
+                                startPoint: startPoint,
+                                endPoint: endPoint,
                                 directed: true,
                                 weigth: 0
                             })
-                            g.addEdges(initialPoint, node, 3, true);
-                        }
-                        else {
-                            context.moveTo(initialPoint.x, initialPoint.y);
-                            context.lineTo(node.x, node.y);
-                            this.state.edges.push({
-                                initialPoint: initialPoint,
-                                finalPoint: node,
-                                intersectionPoint: null,
+                        })
+                    }
+                    else {
+                        weightVal.setAttributeNS(null, 'id', `u_${startNode.id}_${endNode.id}`);
+                        g.addEdges(startNode, endNode, 0, false);
+                        this.setState({
+                            edges: this.state.edges.concat({
+                                id: `${startNode.id}-${endNode.id}`,
+                                startNode: startNode,
+                                endNode: endNode,
+                                startPoint: startPoint,
+                                endPoint: endPoint,
                                 directed: false,
                                 weigth: 0
                             })
-                            g.addEdges(initialPoint, node, 3, false);
-                        }
-                        // this.setState({ isModalOpen: true });
-                        context.lineWidth = 3;
-                        // context.fillStyle = 'blue';
-                        // context.font = "25px Arial";
-                        // context.textBaseline = "ideographic";
-                        // context.fillText(4, (initialPoint.x + node.x) / 2, (node.y + initialPoint.y) / 2);
-                        context.stroke();
-                        context.fillStyle = 'white';
-                        context.font = "20px Arial";
-                        context.textBaseline = "ideographic";
-                        context.fillText(initialPoint.id, initialPoint.x - 7, initialPoint.y + 7);
-                        context.fillText(node.id, node.x - 7, node.y + 7);
-                        arrowStarted = false;
+                        })
                     }
+                    edge.setAttributeNS(null, 'class', 'edge');
+                    edge.addEventListener('click', (evt) => this.addWeight(evt), false)
+                    edge.setAttributeNS(null, 'id', `${startNode.id}-${endNode.id}`);
+                    weightVal.setAttributeNS(null, 'class', 'weightval');
+                    weightVal.setAttributeNS(null, 'style', 'font-size: 25px;');
+                    weightVal.addEventListener('click', (evt) => this.addWeight(evt), false);
+                    weightVal.innerHTML = '0';
+                    g_edge.appendChild(edge);
+                    g_edge.appendChild(weightVal);
+                    g_edge.setAttributeNS(null, 'class', 'svgElement');
+                    svg.appendChild(g_edge);
                 }
+                setTimeout(() => {
+                    arrowStarted = false;
+                }, 5);
             }
         }
     }
 
-    animateBFS(context, animationBFS) {
-        for (let i = 0; i < animationBFS.length; ++i) {
-            setTimeout(() => {
-                context.beginPath();
-                context.fillStyle = 'white';
-                context.arc(animationBFS[i][0], animationBFS[i][1], animationBFS[i][2], 0, 2 * Math.PI);
-                context.globalAlpha = 0.5;
-                context.fill();
-                context.stroke();
-                if (i === animationBFS.length - 1) {
-                    context.globalAlpha = 1;
-                    setTimeout(() => {
-                        console.log("making normal");
-                        for (let j = 0; j < this.state.nodes.length; ++j) {
-                            context.beginPath();
-                            context.fillStyle = 'black';
-                            context.arc(this.state.nodes[j].x, this.state.nodes[j].y, this.state.nodes[j].radius, 0, 2 * Math.PI);
-                            context.fill();
-                            context.fillStyle = 'white';
-                            context.font = "20px Arial";
-                            context.textAlign = "center";
-                            context.fillText(this.state.nodes[j].id, this.state.nodes[j].x - 7, this.state.nodes[j].y + 7);
-                            context.stroke();
-                            bftAlgo = false;
-                        }
-                    }, 100);
-                }
-            }, i * 1000);
+    addWeight(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        evt.stopImmediatePropagation();
+        if (this.state.addWeight) {
+            var id = evt.target.getAttributeNS(null, 'id');
+            var id1, id2, d;
+            [d, id1, id2] = id.split('_');
+            const weight = prompt('enter weight');
+            document.getElementById(id).innerHTML = weight ? weight : 0;
+            if (d === 'd') {
+                g.editWeight(id1, id2, Number(weight), true);
+            }
+            else {
+                g.editWeight(id1, id2, Number(weight), false);
+            }
         }
-    }
-
-    animateBFT(context, animationBFT) {
-        for (let i = 0; i < animationBFT.length; ++i) {
-            setTimeout(() => {
-                context.beginPath();
-                context.fillStyle = 'white';
-                context.arc(animationBFT[i][0], animationBFT[i][1], animationBFT[i][2], 0, 2 * Math.PI);
-                context.globalAlpha = 0.5;
-                context.fill();
-                context.stroke();
-                if (i === animationBFT.length - 1) {
-                    context.globalAlpha = 1;
-                    setTimeout(() => {
-                        console.log("making normal");
-                        for (let j = 0; j < this.state.nodes.length; ++j) {
-                            context.beginPath();
-                            context.fillStyle = 'black';
-                            context.arc(this.state.nodes[j].x, this.state.nodes[j].y, this.state.nodes[j].radius, 0, 2 * Math.PI);
-                            context.fill();
-                            context.fillStyle = 'white';
-                            context.font = "20px Arial";
-                            context.textAlign = "center";
-                            context.fillText(this.state.nodes[j].id, this.state.nodes[j].x - 7, this.state.nodes[j].y + 7);
-                            context.stroke();
-                            bftAlgo = false;
-                        }
-                    }, 100);
-                }
-            }, i * 1000);
-        }
-    }
-
-    animateDFS(context, animationDFS) {
-        console.log(animationDFS);
-        for (let i = 0; i < animationDFS.length; ++i) {
-            setTimeout(() => {
-                context.beginPath();
-                context.fillStyle = 'white';
-                context.arc(animationDFS[i][0], animationDFS[i][1], animationDFS[i][2], 0, 2 * Math.PI);
-                context.globalAlpha = 0.5;
-                context.fill();
-                context.stroke();
-                if (i === animationDFS.length - 1) {
-                    context.globalAlpha = 1;
-                    setTimeout(() => {
-                        for (let j = 0; j < this.state.nodes.length; ++j) {
-                            context.beginPath();
-                            context.fillStyle = 'black';
-                            context.arc(this.state.nodes[j].x, this.state.nodes[j].y, this.state.nodes[j].radius, 0, 2 * Math.PI);
-                            context.fill();
-                            context.fillStyle = 'white';
-                            context.font = "20px Arial";
-                            context.textAlign = "center";
-                            context.fillText(this.state.nodes[j].id, this.state.nodes[j].x - 7, this.state.nodes[j].y + 7);
-                            context.stroke();
-                            dftAlgo = false;
-                        }
-                    }, 100);
-                }
-            }, i * 1000);
-        }
-    }
-
-    assignWeigth(evt) {
-        this.setState({ weigth: this.weigth.value });
+        return false;
     }
 
     resetGraph() {
-        var canvas = document.getElementById('myCanvas');
-        var context = canvas.getContext('2d');
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        const arr = [];
         i = 0;
-        nodes = [];
-        edges = [];
-        g = new graph(30);
         this.setState({
-            isModalOpen: false,
-            weigth: 0,
             nodes: [],
             edges: [],
             directed: true,
+            deleteNode: false,
+            algo: false,
+            dijkstraAlgo: false,
+            bftAlgo: false,
+            dftAlgo: false,
+            bfsAlgo: false,
+            addNode: false,
             addWeight: false,
-            deleteNode: false
-        })
-    }
-
-    bft() {
-        bftAlgo = true;
-        alert("click any node to start traversal");
-    }
-
-    dft() {
-        dftAlgo = true;
-        alert("click any node to start traversal");
-    }
-
-    bfs() {
-        bfsAlgo = true;
-        alert("click any node to start Search");
-    }
-
-    dijkstra() {
-        dijkstraAlgo = true;
-        alert("click any node to start Search");
+            addEdges: false
+        });
+        g = new graph(30);
+        var a = document.getElementsByClassName('svgElement');
+        var b = document.getElementById('svg');
+        document.getElementsByClassName('info')[0] = '';
+        document.getElementsByClassName('heading')[0] = '';
+        for (let j = document.getElementsByClassName('svgElement').length - 1; j >= 0; j--) {
+            document.getElementById('svg').removeChild(document.getElementsByClassName('svgElement')[j]);
+        }
     }
 
     handleAlgo(evt) {
         if (evt.target.value === "Breadth First traversal") {
-            this.bft();
+            document.getElementsByClassName('heading')[0].innerHTML = "Breadth First traversal";
+            this.setState({
+                algo: true,
+                bftAlgo: true,
+                dftAlgo: false,
+                bfsAlgo: false,
+                dijkstraAlgo: false
+            });
+            // bftAlgo = true;
+            alert("click any node to start traversal");
+            document.getElementsByClassName('info')[0].innerHTML = "click any node to start traversal";
         }
         else if (evt.target.value === "Depth First traversal") {
-            this.dft();
+            document.getElementsByClassName('heading')[0].innerHTML = "Depth First traversal";
+            this.setState({
+                algo: true,
+                bftAlgo: false,
+                dftAlgo: true,
+                bfsAlgo: false,
+                dijkstraAlgo: false
+            });
+            // dftAlgo = true;
+            alert("click any node to start traversal");
+            document.getElementsByClassName('info')[0].innerHTML = "click any node to start traversal";
         }
         else if (evt.target.value === "Breadth First Search") {
-            this.bfs();
+            document.getElementsByClassName('heading')[0].innerHTML = "Breadth First Search";
+            this.setState({
+                algo: true,
+                bftAlgo: false,
+                dftAlgo: false,
+                bfsAlgo: true,
+                dijkstraAlgo: false
+            });
+            // bfsAlgo = true;
+            alert("click any node to start Search");
+            document.getElementsByClassName('info')[0].innerHTML = "click any node to start Search";
         }
-        else if (evt.target.value === "Dijstra's path finding algo") {
-            this.dijkstra();
+        else if (evt.target.value === "Dijkstra's path finding algo") {
+            document.getElementsByClassName('heading')[0].innerHTML = "Dijkstra's path finding algorithm";
+            this.setState({
+                algo: true,
+                bftAlgo: false,
+                dftAlgo: false,
+                bfsAlgo: false,
+                dijkstraAlgo: true
+            });
+            // dijkstraAlgo = true;
+            alert("click any node to start Search");
+            document.getElementsByClassName('info')[0].innerHTML = "click any node to start Search";
         }
     }
 
     handleEdge(evt) {
-        if (evt.target.value === "directed") {
-            this.setState({ directed: true })
-        }
-        else if (evt.target.value === "undirected") {
-            this.setState({ directed: false })
+        if (this.state.addEdges) {
+            if (evt.target.value === "directed") {
+                this.setState({ directed: true })
+            }
+            else if (evt.target.value === "undirected") {
+                this.setState({ directed: false })
+            }
         }
     }
 
     render() {
         return (
             <div style={{ backgroundColor: '#f8f9fa' }}>
-                <div className="d-flex" style={{ marginTop: "10px" }}>
-                    <div><Button style={{ marginLeft: '10px' }} onClick={this.resetGraph}>Reset</Button></div>
-                    <div><Button style={{ marginLeft: '10px' }} onClick={() => this.setState({ addWeight: false, deleteNode: false })}>AddNode</Button></div>
-                    {/* <div><Button style={{ marginLeft: '10px' }} onClick={() => this.setState({ deleteNode: true })}>DeleteNode</Button></div>
-                    <div><Button style={{ marginLeft: '10px' }} onClick={() => this.setState({ addWeight: true })}>AddWeight</Button></div> */}
-                    <div className="d-flex">
-                        <Label style={{ marginLeft: '10px' }} for="selectEdge">Add edges</Label>
-                        <Input type="select" name="select" id="selectEdge" onChange={(evt) => this.handleEdge(evt)}>
+                <div className="d-flex" style={{ margin: "10px", backgroundColor: 'white' }}>
+                    <div style={{marginBottom: '10px'}}>
+                        <Label style={{ marginLeft: '30px' }}><Input onChange={() => this.setState({ addNode: true, addEdges: false, addWeight: false })}
+                            type="radio" name="radio1" /> Add Node</Label>
+                        <Label style={{ marginLeft: '30px' }}><Input onChange={() => this.setState({ addNode: false, addEdges: false, addWeight: true })}
+                            type="radio" name="radio1" /> Add Weight</Label>
+                        <Label style={{ marginLeft: '30px' }}><Input onChange={() => this.setState({ addNode: false, addEdges: true, addWeight: false })}
+                            type="radio" name="radio1" /> Add edges</Label>
+                    </div>
+                    <div style={{marginBottom: '10px'}} className="d-flex">
+                        <Label style={{ marginLeft: '10px' }} for="selectEdge">Edge: </Label>
+                        <Input disabled={this.state.addNode || this.state.addWeight} type="select" name="select" id="selectEdge"
+                            onChange={(evt) => { this.handleEdge(evt) }}>
                             <option>select</option>
                             <option>directed</option>
                             <option>undirected</option>
                         </Input>
                     </div>
-                    <div className="d-flex">
+                    <div style={{marginBottom: '10px'}} className="d-flex">
                         <Label style={{ marginLeft: '10px' }} for="selectAlgo">Algorithm: </Label>
-                        <Input type="select" name="select" id="selectAlgo" onChange={(evt) => this.handleAlgo(evt)}>
+                        <Input disabled={this.state.algo} type="select" name="select" id="selectAlgo"
+                            onChange={
+                                (evt) => {
+                                    this.handleAlgo(evt)
+                                }}>
                             <option>select</option>
                             <option>Breadth First traversal</option>
                             <option>Depth First traversal</option>
                             <option>Breadth First Search</option>
-                            <option>Dijstra's path finding algo</option>
+                            <option>Dijkstra's path finding algo</option>
                         </Input>
                     </div>
+                    <div style={{marginBottom: '10px'}} className="ml-auto"><Button style={{ marginLeft: '10px' }}
+                        onClick={() => this.resetGraph()}>Reset</Button></div>
                 </div>
-                <Modal isOpen={this.state.isModalOpen}>
-                    <ModalHeader>Weight</ModalHeader>
-                    <ModalBody>
-                        <Input type="number" min={0} max={10000} id="weightInput" onKeyPress={(evt) => {
-                            if (evt.key === "Enter") {
-                                this.setState({
-                                    isModalOpen: !this.state.isModalOpen,
-                                    weigth: evt.target.value
-                                });
-                            }
-                        }}
-                        />
-                        <Button id="myButton" onClick={() => { this.setState({ isModalOpen: !this.state.isModalOpen }) }} color="primary">Enter</Button>
-                    </ModalBody>
-                </Modal>
-                <canvas id="myCanvas" width="1000" height="2000"
-                    onClick={(evt) => this.drawNode(evt)} onMouseDown={(evt) => this.drawEdge(evt)}
-                    onMouseUp={(evt) => this.drawEdge(evt)} ></canvas>
-            </div>
+                <div>
+                    <h2 className="heading"></h2>
+                    <h4 className="info"></h4>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" id="svg"
+                    onClick={(evt) => this.drawNodeSvg(evt)}
+                    width="1350" height="2000">
+                    <defs>
+                        <marker id="markerArrow" markerWidth="13" markerHeight="13" refX="6.1" refY="3.5"
+                            orient="auto">
+                            <polygon points="-1 0, 7 3.5, 0, 6" style={{ fill: 'black' }} />
+                        </marker>
+                    </defs>
+                </svg>
+            </div >
         );
     }
 }

@@ -44,7 +44,6 @@ class Comparison extends Component {
         var j = 5;
         for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
             array.push(j);
-            console.log(j);
             j += 5
         }
         this.setState({ array: array });
@@ -55,7 +54,6 @@ class Comparison extends Component {
         var j = 200;
         for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
             array.push(j);
-            console.log(j);
             j -= 5
         }
         this.setState({ array: array });
@@ -75,6 +73,7 @@ class Comparison extends Component {
         for (let i = 0; i < animationIds4.length; ++i) {
             clearTimeout(animationIds4[i]);
         }
+
         for (let i = 0; i < animationIds1.length; ++i) {
             clearTimeout(animationIds1[i]);
         }
