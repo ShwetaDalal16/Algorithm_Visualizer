@@ -16,6 +16,10 @@
   margin: 10px;
 }
 
+.node:hover {
+  fill: grey;
+}
+
 .nodeval {
   pointer-events: none;
   user-select: none;

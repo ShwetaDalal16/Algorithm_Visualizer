@@ -179,6 +179,7 @@ class Graph extends Component {
                 node.setAttributeNS(null, "cy", y);
                 node.setAttributeNS(null, 'r', 30);
                 node.setAttributeNS(null, 'id', i);
+                node.setAttributeNS(null, 'class', "node");
                 node.setAttributeNS(null, 'fill', 'black');
                 node.addEventListener('click', (evt) => this.nodeClick(evt), false);
                 node.addEventListener('mousedown', (evt) => { this.drawEdgeSvg(evt) }, false);
@@ -311,13 +312,15 @@ class Graph extends Component {
             var id = evt.target.getAttributeNS(null, 'id');
             var id1, id2, d;
             [d, id1, id2] = id.split('_');
-            const weight = prompt('enter weight');
-            document.getElementById(id).innerHTML = weight ? weight : 0;
-            if (d === 'd') {
-                g.editWeight(id1, id2, Number(weight), true);
-            }
-            else {
-                g.editWeight(id1, id2, Number(weight), false);
+            const weight = Number(prompt('Enter positive Number'));
+            if (!isNaN(weight) && weight >= 0) {
+                document.getElementById(id).innerHTML = weight ? weight : 0;
+                if (d === 'd') {
+                    g.editWeight(id1, id2, Number(weight), true);
+                }
+                else {
+                    g.editWeight(id1, id2, Number(weight), false);
+                }
             }
         }
         return false;
@@ -420,7 +423,7 @@ class Graph extends Component {
         return (
             <div style={{ backgroundColor: '#f8f9fa' }}>
                 <div className="d-flex" style={{ margin: "10px", backgroundColor: 'white' }}>
-                    <div style={{marginBottom: '10px'}}>
+                    <div style={{ marginBottom: '10px' }}>
                         <Label style={{ marginLeft: '30px' }}><Input onChange={() => this.setState({ addNode: true, addEdges: false, addWeight: false })}
                             type="radio" name="radio1" /> Add Node</Label>
                         <Label style={{ marginLeft: '30px' }}><Input onChange={() => this.setState({ addNode: false, addEdges: false, addWeight: true })}
@@ -428,7 +431,7 @@ class Graph extends Component {
                         <Label style={{ marginLeft: '30px' }}><Input onChange={() => this.setState({ addNode: false, addEdges: true, addWeight: false })}
                             type="radio" name="radio1" /> Add edges</Label>
                     </div>
-                    <div style={{marginBottom: '10px'}} className="d-flex">
+                    <div style={{ marginBottom: '10px' }} className="d-flex">
                         <Label style={{ marginLeft: '10px' }} for="selectEdge">Edge: </Label>
                         <Input disabled={this.state.addNode || this.state.addWeight} type="select" name="select" id="selectEdge"
                             onChange={(evt) => { this.handleEdge(evt) }}>
@@ -437,7 +440,7 @@ class Graph extends Component {
                             <option>undirected</option>
                         </Input>
                     </div>
-                    <div style={{marginBottom: '10px'}} className="d-flex">
+                    <div style={{ marginBottom: '10px' }} className="d-flex">
                         <Label style={{ marginLeft: '10px' }} for="selectAlgo">Algorithm: </Label>
                         <Input disabled={this.state.algo} type="select" name="select" id="selectAlgo"
                             onChange={
@@ -451,7 +454,7 @@ class Graph extends Component {
                             <option>Dijkstra's path finding algo</option>
                         </Input>
                     </div>
-                    <div style={{marginBottom: '10px'}} className="ml-auto"><Button style={{ marginLeft: '10px' }}
+                    <div style={{ marginBottom: '10px' }} className="ml-auto"><Button style={{ marginLeft: '10px' }}
                         onClick={() => this.resetGraph()}>Reset</Button></div>
                 </div>
                 <div>
