@@ -43,7 +43,7 @@ class Graph extends Component {
             bftAlgo: false,
             dftAlgo: false,
             bfsAlgo: false,
-            addNode: false,
+            addNode: true,
             addWeight: false,
             addEdges: false
         }
@@ -103,6 +103,7 @@ class Graph extends Component {
                 document.getElementsByClassName('info')[0].innerHTML = "click any node to start Search";
 
             }, 1500)
+            this.setState({ algo: false });
         }
         for (let i = 0; i < svgAnimationBFT.length; ++i) {
             setTimeout(() => {
@@ -141,13 +142,28 @@ class Graph extends Component {
                 document.getElementById(`d_${distance[i][0]}`).innerHTML = distance[i][1];
                 if (i === distance.length - 1) {
                     const path = svgAnimationDijkstra[0];
+                    if (path.length <= 2) {
+                        document.getElementsByClassName('info')[0].style.color = 'red';
+                        document.getElementsByClassName('info')[0].innerHTML = "No path";
+                        for (let k = 0; k < distance.length; ++k) {
+                            document.getElementById(`${distance[k][0]}`).style.fill = "black";
+                            document.getElementById(`d_${distance[k][0]}`).innerHTML = "";
+                        }
+                        setTimeout(() => {
+                            document.getElementsByClassName('info')[0].style.color = 'black';
+                            document.getElementsByClassName('info')[0].innerHTML = "click any node to start Search";
+
+                        }, 1500)
+                        this.setState({ algo: false });
+                        return;
+                    }
                     for (let j = 1; j < path.length; ++j) {
                         setTimeout(() => {
                             document.getElementById(`${path[j]}`).style.fill = "green";
                             if (j === path.length - 1) {
                                 for (let k = 0; k < distance.length; ++k) {
                                     setTimeout(() => {
-                                        document.getElementById(`${distance[k][0]}`).style.fill = "grey";
+                                        document.getElementById(`${distance[k][0]}`).style.fill = "black";
                                         document.getElementById(`d_${distance[k][0]}`).innerHTML = "";
                                         // dijkstraAlgo = false;
                                         if (this.state.dijkstraAlgo) {
@@ -339,15 +355,15 @@ class Graph extends Component {
             bftAlgo: false,
             dftAlgo: false,
             bfsAlgo: false,
-            addNode: false,
+            addNode: true,
             addWeight: false,
             addEdges: false
         });
         g = new graph(30);
         var a = document.getElementsByClassName('svgElement');
         var b = document.getElementById('svg');
-        document.getElementsByClassName('info')[0] = '';
-        document.getElementsByClassName('heading')[0] = '';
+        document.getElementsByClassName('info')[0].innerHTML = '';
+        document.getElementsByClassName('heading')[0].innerHTML = '';
         for (let j = document.getElementsByClassName('svgElement').length - 1; j >= 0; j--) {
             document.getElementById('svg').removeChild(document.getElementsByClassName('svgElement')[j]);
         }
